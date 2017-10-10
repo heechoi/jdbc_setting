@@ -3,11 +3,13 @@ package kr.or.dgit.jdbc_setting.jdbc;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class DBCon {
 	private static final DBCon instance = new DBCon();
-	
+	private Connection  connection;
 	
 	public static DBCon getInstance() {
 		return instance;
@@ -15,9 +17,15 @@ public class DBCon {
 
 	private DBCon(){
 		Properties properties = getProperties("conf.properties");
-		System.out.println(properties.get("user"));
+		try {
+			connection = DriverManager.getConnection(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("pwd"));
+		} catch (SQLException e) {
+			System.out.printf("%s %s-%n",e.getErrorCode(),e.getStackTrace());
+			e.printStackTrace();
+		}
+		/*System.out.println(properties.get("user"));
 		System.out.println(properties.get("pwd"));
-		System.out.println(properties.get("url"));
+		System.out.println(properties.get("url"));*/
 	} //생성자를 private으로 해서 아무나 생성하지 못하게 한다. properties를 불러오는 방법 // db경로를 바로 연결해준다
 
 	private Properties getProperties(String propertiesPath) {
@@ -35,6 +43,6 @@ public class DBCon {
 		return connection;
 	}
 
-	private Connection  connection;
+	
 	
 }
